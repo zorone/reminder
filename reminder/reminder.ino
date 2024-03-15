@@ -35,6 +35,7 @@ void loop() {
   if (lastReportedPos != encoderPos) {
     Serial.print("Index:");
     Serial.println(encoderPos, DEC);
+    Serial.println("Hello World!")
     lastReportedPos = encoderPos;
   }
   if (digitalRead(clearButton) == LOW )  {
