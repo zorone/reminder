@@ -1,3 +1,4 @@
+
 /*  Arduino Game Proejct
  *  Program made by Dejan Nedelkovski,
  *  www.HowToMechatronics.com 
@@ -9,8 +10,8 @@
  *  www.RinkyDinkElectronics.com
  */
  
-#include <UTFT.h> 
-#include <UTouch.h>
+#include <UTFT.h>
+#include <URTouch.h>
 #include <EEPROM.h>
 
 //==== Creating Objects
