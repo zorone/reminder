@@ -16,7 +16,7 @@
 
 //==== Creating Objects
 UTFT    myGLCD(SSD1289,38,39,40,41); //Parameters should be adjusted to your Display/Schield model
-UTouch  myTouch( 6, 5, 4, 3, 2);
+URTouch  myTouch( 6, 5, 4, 3, 2);
 
 //==== Defining Fonts
 extern uint8_t SmallFont[];
