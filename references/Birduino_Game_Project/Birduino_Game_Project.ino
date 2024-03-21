@@ -3,19 +3,19 @@
  *  www.HowToMechatronics.com 
  */
  
-/*  This program uses the UTFT and URTouch libraries
+/*  This program uses the UTFT and UTouch libraries
  *  made by Henning Karlsen. 
  *  You can find and download them at:
  *  www.RinkyDinkElectronics.com
  */
  
 #include <UTFT.h> 
-#include <URTouch.h>
+#include <UTouch.h>
 #include <EEPROM.h>
 
 //==== Creating Objects
 UTFT    myGLCD(SSD1289,38,39,40,41); //Parameters should be adjusted to your Display/Schield model
-URTouch  myTouch( 6, 5, 4, 3, 2);
+UTouch  myTouch( 6, 5, 4, 3, 2);
 
 //==== Defining Fonts
 extern uint8_t SmallFont[];
