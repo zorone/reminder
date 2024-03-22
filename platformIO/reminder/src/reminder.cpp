@@ -9,8 +9,20 @@
  *  www.RinkyDinkElectronics.com
  */
 
+#include <Arduino.h>
 #include <UTFT.h> 
 #include <URTouch.h>
+
+void drawHomeScreen();
+void drawFrame(int x1, int y1, int x2, int y2);
+void drawDistanceSensor();
+void drawLedControl();
+void drawGround();
+void drawPilars(int x, int y);
+void drawBird(int y);
+void getDistance();
+void setLedColor();
+void restartGame();
 
 //==== Creating Objects
 UTFT    myGLCD(SSD1289,38,39,40,41); //Parameters should be adjusted to your Display/Schield model
