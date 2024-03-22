@@ -10,7 +10,8 @@
  */
 
 #include <Arduino.h>
-#include <UTFT.h> 
+#include <SPI.h>
+#include <UTFT.h>
 #include <URTouch.h>
 
 void drawHomeScreen();
