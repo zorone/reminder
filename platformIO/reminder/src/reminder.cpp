@@ -11,6 +11,7 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+#include <LiquidCrystal_I2C.h>
 #include <UTFT.h>
 #include <URTouch.h>
 
