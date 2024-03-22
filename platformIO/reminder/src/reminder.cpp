@@ -11,9 +11,11 @@
 
 #include <Arduino.h>
 #include <SPI.h>
-#include <LiquidCrystal_I2C.h>
+#include <LiquidCrystal.h>
 #include <UTFT.h>
 #include <URTouch.h>
+
+#include <TEA5767.h>
 
 void drawHomeScreen();
 void drawFrame(int x1, int y1, int x2, int y2);
