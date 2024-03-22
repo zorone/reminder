@@ -1,0 +1,3 @@
+[submodule "reminder/ino2cpp"]
+	path = reminder/ino2cpp
+	url = https://github.com/arquicanedo/ino2cpp.git
