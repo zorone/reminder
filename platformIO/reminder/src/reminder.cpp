@@ -28,6 +28,11 @@ uint8_t newgrid[GRIDX][GRIDY];
 
 uint16_t genCount = 0;
 
+void drawGrid(void);
+void initGrid(void);
+void computeCA();
+int getNumberOfNeighbors(int x, int y);
+
 void setup()   {
 
   //Set up the display
