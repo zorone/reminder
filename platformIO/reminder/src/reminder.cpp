@@ -61,9 +61,9 @@ uint8_t getNumberOfNeighbors(int x, int y);
 //#define GRIDY 60
 //#define CELLXY 4
 
-#define GRIDX 120
-#define GRIDY 80
-#define CELLXY 4
+#define GRIDX 60
+#define GRIDY 40
+#define CELLXY 8
 
 #define GEN_DELAY 0
 
