@@ -21,6 +21,24 @@ from https://github.com/moononournation/ArduinoFreeFontFile/tree/master
 or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 */
 
+/*
+  Serial Monitor Command
+  for Arduino Mega2560 wifi, default baud value from manufature is 74880 baud
+  C:\Users\ASUS\.platformio\penv\Scripts\platformio.exe device monitor -b 74880 --environment reminder
+
+  dump command
+  //incorrect avrdude -p m2560 -P COM9 -c arduino -U flash:r:"D:/shared/Documents/CPE2422/reminder/dump mega2560wifi_default.bin":r
+  //incorrect avrdude -p m2560 -P COM9 -c stk500v2 -b 74880 -U flash:r:"mega2560wifi_default.bin":r
+  //incorrect avrdude -p m2560 -P COM9 -c wiring -U flash:r:"mega2560wifi_default.bin":r
+  //not work; DIP: 11110000; avrdude -p m2560 -P COM10 -c arduino -U flash:r:"mega2560wifi_default.bin":r
+  //not work; DIP: 00110000; avrdude -p m2560 -P COM10 -c arduino -U flash:r:"mega2560wifi_default.bin":r
+  avrdude -p m2560 -P COM10 -c wiring -U flash:r:"mega2560wifi_default.bin":r ;  with DIP: 11110000; no Vin
+  avrdude -p m2560 -P COM10 -c wiring -U flash:r:"mega2560wifi_default.bin":r ;  with DIP: 00110000; no Vin
+  python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x100000 mega2560wifi_default-3.bin;  with DIP: 00001110; no Vin
+  python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x400000 mega2560wifi_default-4.bin;  with DIP: 00001110; no Vin
+*/
+
+
 #include <Arduino_GFX_Library.h>
 
 void drawGrid(void);
