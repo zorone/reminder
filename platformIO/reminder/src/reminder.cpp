@@ -34,8 +34,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   //not work; DIP: 00110000; avrdude -p m2560 -P COM10 -c arduino -U flash:r:"mega2560wifi_default.bin":r
   avrdude -p m2560 -P COM10 -c wiring -U flash:r:"mega2560wifi_default.bin":r ;  with DIP: 11110000; no Vin
   avrdude -p m2560 -P COM10 -c wiring -U flash:r:"mega2560wifi_default.bin":r ;  with DIP: 00110000; no Vin
-  python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x100000 mega2560wifi_default-3.bin;  with DIP: 00001110; no Vin
-  python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x400000 mega2560wifi_default-4.bin;  with DIP: 00001110; no Vin
+  python ..\tools\esptool-4.7.0\esptool.py -b 115200 --port COM10 read_flash 0x00000 ALL mega2560wifi_default-3.bin;  with DIP: 00001110; no Vin
 
   reflash
   avrdude -p m2560 -P COM9 -b 115200 -c wiring -D -U flash:w:mega2560wifi_default-2.bin:r
