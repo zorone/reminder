@@ -36,6 +36,17 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   avrdude -p m2560 -P COM10 -c wiring -U flash:r:"mega2560wifi_default.bin":r ;  with DIP: 00110000; no Vin
   python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x100000 mega2560wifi_default-3.bin;  with DIP: 00001110; no Vin
   python ..\tools\esptool-4.7.0\esptool.py -b 9600 --port COM10 read_flash 0x00000 0x400000 mega2560wifi_default-4.bin;  with DIP: 00001110; no Vin
+
+  reflash
+  avrdude -p m2560 -P COM9 -b 115200 -c wiring -D -U flash:w:mega2560wifi_default-2.bin:r
+
+  IMPORTANT!!!
+  Check if it was connecting correctly. Check if USB port is seated securely. And check if DIP switch is set, and was securely set.
+
+  Troubleshoot Process:
+  Flash esp8266 -> try DIP: 11000000 -> try DIP: 11100000 -> try DIP 11110000; It should eliminate "programmer is not responding" error.
+  sometimes you should go take a break for a bit. It might work after you come back...
+  (Actually, maybe processor get too hot? If that the case, we should lower baud rates a bit.)
 */
 
 
@@ -44,7 +55,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 void drawGrid(void);
 void initGrid(void);
 void computeCA();
-int getNumberOfNeighbors(int x, int y);
+uint8_t getNumberOfNeighbors(int x, int y);
 
 //#define GRIDX 80
 //#define GRIDY 60
@@ -57,10 +68,10 @@ int getNumberOfNeighbors(int x, int y);
 #define GEN_DELAY 0
 
 //Current grid
-uint8_t grid[GRIDX][GRIDY];
+boolean grid[GRIDX][GRIDY];
 
 //The new grid for the next generation
-uint8_t newgrid[GRIDX][GRIDY];
+boolean newgrid[GRIDX][GRIDY];
 
 //Number of generations
 #define NUMGEN 600
@@ -113,7 +124,7 @@ void loop() {
   drawGrid();
 
   //Compute generations
-  for (int gen = 0; gen < genCount; gen++)
+  for (uint16_t gen = 0; gen < genCount; gen++)
   {
     computeCA();
     drawGrid();
@@ -166,7 +177,7 @@ void initGrid(void) {
 void computeCA() {
   for (int16_t x = 1; x < GRIDX; x++) {
     for (int16_t y = 1; y < GRIDY; y++) {
-      int neighbors = getNumberOfNeighbors(x, y);
+      uint8_t neighbors = getNumberOfNeighbors(x, y);
       if (grid[x][y] == 1 && (neighbors == 2 || neighbors == 3 ))
       {
         newgrid[x][y] = 1;
@@ -182,8 +193,12 @@ void computeCA() {
 }
 
 // Check the Moore neighbourhood
-int getNumberOfNeighbors(int x, int y) {
-  return grid[x - 1][y] + grid[x - 1][y - 1] + grid[x][y - 1] + grid[x + 1][y - 1] + grid[x + 1][y] + grid[x + 1][y + 1] + grid[x][y + 1] + grid[x - 1][y + 1];
+uint8_t getNumberOfNeighbors(int x, int y) {
+  int a = x-1;
+  int b = x+1;
+  int c = y-1;
+  int d = y+1;
+  return grid[a][y] + grid[a][c] + grid[x][c] + grid[b][c] + grid[b][y] + grid[b][d] + grid[x][d] + grid[a][d];
 }
 
 /*
