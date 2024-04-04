@@ -61,17 +61,17 @@ uint8_t getNumberOfNeighbors(int x, int y);
 //#define GRIDY 60
 //#define CELLXY 4
 
-#define GRIDX 160
-#define GRIDY 106
-#define CELLXY 3
+#define GRIDX 120
+#define GRIDY 80
+#define CELLXY 4
 
 #define GEN_DELAY 0
 
 //Current grid
-boolean grid[GRIDX][GRIDY];
+int8_t grid[GRIDX][GRIDY];
 
 //The new grid for the next generation
-boolean newgrid[GRIDX][GRIDY];
+int8_t newgrid[GRIDX][GRIDY];
 
 //Number of generations
 #define NUMGEN 600
