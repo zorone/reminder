@@ -55,7 +55,8 @@ Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, 46 /* RST */);
 void setup()   {
 
   Serial.begin(115200);
-  Serial.println("Arduino_GFX testing\n");
+  Serial.println("Arduino_GFX testing");
+  Serial.println("Conway's Game of Life Demo");
 
   //Set up the display
   if(!gfx->begin()){
