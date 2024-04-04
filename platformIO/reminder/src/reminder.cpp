@@ -2,10 +2,31 @@
 //devised by the British mathematician John Horton Conway in 1970.
 // https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 
-#include <SPI.h>
-#include <TFT_eSPI.h> // Hardware-specific library
+/*
+  Port:
+  PIN_SPI_SS    53  -- Not Connected
+  PIN_SPI_MOSI  51
+  PIN_SPI_MISO  50  -- Not Connected; plan to implement for touch screen
+  PIN_SPI_SCK   52
 
-TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
+  DC            49
+  CS            48
+  RST           46
+*/
+
+// TODO: do LCD backlight control, currently it is directly connected 
+// TODO: implement touchscreen features
+/* // TODO: Add fonts
+from https://github.com/moononournation/ArduinoFreeFontFile/tree/master 
+or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
+*/
+
+#include <Arduino_GFX_Library.h>
+
+void drawGrid(void);
+void initGrid(void);
+void computeCA();
+int getNumberOfNeighbors(int x, int y);
 
 //#define GRIDX 80
 //#define GRIDY 60
@@ -28,39 +49,43 @@ uint8_t newgrid[GRIDX][GRIDY];
 
 uint16_t genCount = 0;
 
-void drawGrid(void);
-void initGrid(void);
-void computeCA();
-int getNumberOfNeighbors(int x, int y);
+Arduino_DataBus *bus = new Arduino_HWSPI(49 /* DC */, 48 /* CS */);
+Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, 46 /* RST */);
 
 void setup()   {
 
+  Serial.begin(115200);
+  Serial.println("Arduino_GFX testing\n");
+
   //Set up the display
-  tft.init();
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(1);
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(0, 0);
+  if(!gfx->begin()){
+    Serial.println("gfx->begin() failed!");
+  }
+
+  gfx->setRotation(3);
+  gfx->fillScreen(BLACK);
+  gfx->setTextSize(1);
+  gfx->setTextColor(WHITE);
+  gfx->setCursor(0, 0);
 
 }
 
 void loop() {
 
   //Display a simple splash screen
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(2);
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(40, 5);
-  tft.println(F("Arduino"));
-  tft.setCursor(35, 25);
-  tft.println(F("Cellular"));
-  tft.setCursor(35, 45);
-  tft.println(F("Automata"));
+  gfx->fillScreen(BLACK);
+  gfx->setTextSize(2);
+  gfx->setTextColor(WHITE);
+  gfx->setCursor(40, 5);
+  gfx->println(F("Arduino"));
+  gfx->setCursor(35, 25);
+  gfx->println(F("Cellular"));
+  gfx->setCursor(35, 45);
+  gfx->println(F("Automata"));
 
   delay(1000);
 
-  tft.fillScreen(TFT_BLACK);
+  gfx->fillScreen(BLACK);
 
   initGrid();
 
@@ -86,13 +111,13 @@ void loop() {
 //Draws the grid on the display
 void drawGrid(void) {
 
-  uint16_t color = TFT_WHITE;
+  uint16_t color = WHITE;
   for (int16_t x = 1; x < GRIDX - 1; x++) {
     for (int16_t y = 1; y < GRIDY - 1; y++) {
       if ((grid[x][y]) != (newgrid[x][y])) {
         if (newgrid[x][y] == 1) color = 0xFFFF; //random(0xFFFF);
         else color = 0;
-        tft.fillRect(CELLXY * x, CELLXY * y, CELLXY, CELLXY, color);
+        gfx->fillRect(CELLXY * x, CELLXY * y, CELLXY, CELLXY, color);
       }
     }
   }
