@@ -30,58 +30,80 @@
 
 #define GFX_BL TFT_LED // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
-/* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
-#if defined(DISPLAY_DEV_KIT)
-Arduino_GFX *gfx = create_default_Arduino_GFX();
-#else /* !defined(DISPLAY_DEV_KIT) */
-
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
 Arduino_DataBus *bus = new Arduino_HWSPI(TFT_DC, TFT_CS);
 
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
 Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
 
-#endif /* !defined(DISPLAY_DEV_KIT) */
 /*******************************************************************************
  * End of Arduino_GFX setting
  ******************************************************************************/
 
 void setup(void)
 {
-  Serial.begin(115200);
-  // Serial.setDebugOutput(true);
-  // while(!Serial);
-  Serial.println("Arduino_GFX Hello World example");
-
-#ifdef GFX_EXTRA_PRE_INIT
-  GFX_EXTRA_PRE_INIT();
-#endif
-
-  // Init Display
-  if (!gfx->begin())
-  {
-    Serial.println("gfx->begin() failed!");
-  }
-  gfx->fillScreen(BLACK);
+    gfx->begin();
+    gfx->fillScreen(BLACK);
 
 #ifdef GFX_BL
-  pinMode(GFX_BL, OUTPUT);
-  digitalWrite(GFX_BL, HIGH);
+    pinMode(GFX_BL, OUTPUT);
+    digitalWrite(GFX_BL, HIGH);
 #endif
+    gfx->setTextColor(WHITE);
+    gfx->setTextSize(2, 2, 2);
 
-  gfx->setCursor(10, 10);
-  gfx->setTextColor(RED);
-  gfx->println("Hello World!");
+    gfx->setCursor(10, 10);
+    gfx->println("XIAO ESP32C3 (in Arduino framework)");
 
-  delay(5000); // 5 seconds
+    gfx->setCursor(10, 30);
+    gfx->println("+ ILI9488 SPI TFT");
+
+    gfx->setCursor(10, 50);
+    gfx->println("using Arduino_GFX Library");
+
+    int w = gfx->width();
+    int h = gfx->height();
+
+    gfx->setCursor(10, 70);
+    gfx->printf("%i x %d", w, h);
+    gfx->drawRect(0, 0, w, h, WHITE);
+
+    delay(3000);
+
+    for(int i=0; i<w; i++){
+      int d = (int)(255 * i/w);
+      gfx->drawLine(i, 0, i, w, RGB565(d, 0, 0));
+      delay(10);
+    }
+    for(int i=0; i<w; i++){
+      int d = (int)(255 * i/w);
+      gfx->drawLine(w-i, 0, w-i, w, RGB565(0, d, 0));
+      delay(10);
+    }
+    for(int i=0; i<w; i++){
+      int d = (int)(255 * i/w);
+      gfx->drawLine(i, 0, i, w, RGB565(0, 0, d));
+      delay(10);
+    }
 }
 
 void loop()
 {
-  gfx->setCursor(random(gfx->width()), random(gfx->height()));
-  gfx->setTextColor(random(0xffff), random(0xffff));
-  gfx->setTextSize(random(6) /* x scale */, random(6) /* y scale */, random(2) /* pixel_margin */);
-  gfx->println("Hello World!");
+    gfx->setTextColor(WHITE);
+    gfx->setTextSize(6, 6, 2);
 
-  delay(1000); // 1 second
+    gfx->fillScreen(RED);
+    gfx->setCursor(100, 100);
+    gfx->printf("RED");
+    delay(2000);
+
+    gfx->fillScreen(GREEN);
+    gfx->setCursor(100, 100);
+    gfx->printf("GREEN");
+    delay(2000);
+
+    gfx->fillScreen(BLUE);
+    gfx->setCursor(100, 100);
+    gfx->printf("BLUE");
+    delay(2000);
 }
