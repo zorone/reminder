@@ -22,6 +22,14 @@
 
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
+#define TFT_CS    D8
+#define TFT_RESET D4
+#define TFT_DC    D2
+#define TFT_MOSI  D7
+#define TFT_SCK   D5
+#define TFT_LED   D1
+#define TFT_MISO  -1
+
 /* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
 #if defined(DISPLAY_DEV_KIT)
 Arduino_GFX *gfx = create_default_Arduino_GFX();
