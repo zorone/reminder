@@ -20,8 +20,6 @@
  ******************************************************************************/
 #include <Arduino_GFX_Library.h>
 
-#define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
-
 #define TFT_CS    D8
 #define TFT_RESET D4
 #define TFT_DC    D2
@@ -30,16 +28,18 @@
 #define TFT_LED   D1
 #define TFT_MISO  -1
 
+#define GFX_BL TFT_LED // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
+
 /* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
 #if defined(DISPLAY_DEV_KIT)
 Arduino_GFX *gfx = create_default_Arduino_GFX();
 #else /* !defined(DISPLAY_DEV_KIT) */
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
-Arduino_DataBus *bus = create_default_Arduino_DataBus();
+Arduino_DataBus *bus = new Arduino_HWSPI(TFT_DC, TFT_CS);
 
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
-Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, DF_GFX_RST, 0 /* rotation */, false /* IPS */);
+Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, DF_GFX_RST, 3 /* rotation */, false /* IPS */);
 
 #endif /* !defined(DISPLAY_DEV_KIT) */
 /*******************************************************************************
