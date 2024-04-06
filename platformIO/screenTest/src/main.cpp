@@ -20,18 +20,16 @@
  ******************************************************************************/
 #include <Arduino_GFX_Library.h>
 
-#define TFT_CS    D8
-#define TFT_RESET D4
-#define TFT_DC    D2
-#define TFT_MOSI  D7
-#define TFT_SCK   D5
-#define TFT_LED   D1
-#define TFT_MISO  -1
-
-#define GFX_BL TFT_LED // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
+#define TFT_DC    5
+#define TFT_CS    4
+#define TFT_WR    3
+#define TFT_RD    2
+#define TFT_PORTLOW 1        // PORTA
+#define TFT_PORTHIGH 3       // PORTC
+#define TFT_RESET 6
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
-Arduino_DataBus *bus = new Arduino_HWSPI(TFT_DC, TFT_CS);
+Arduino_DataBus *bus = new Arduino_AVRPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, TFT_PORTLOW, TFT_PORTHIGH);
 
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
 Arduino_GFX *gfx = new Arduino_ILI9488_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
@@ -45,10 +43,6 @@ void setup(void)
     gfx->begin();
     gfx->fillScreen(BLACK);
 
-#ifdef GFX_BL
-    pinMode(GFX_BL, OUTPUT);
-    digitalWrite(GFX_BL, HIGH);
-#endif
     gfx->setTextColor(WHITE);
     gfx->setTextSize(2, 2, 2);
 
@@ -65,7 +59,7 @@ void setup(void)
     int h = gfx->height();
 
     gfx->setCursor(10, 70);
-    gfx->printf("%i x %d", w, h);
+    gfx->println(w + " x " + h);
     gfx->drawRect(0, 0, w, h, WHITE);
 
     delay(3000);
@@ -94,16 +88,16 @@ void loop()
 
     gfx->fillScreen(RED);
     gfx->setCursor(100, 100);
-    gfx->printf("RED");
+    gfx->println("RED");
     delay(2000);
 
     gfx->fillScreen(GREEN);
     gfx->setCursor(100, 100);
-    gfx->printf("GREEN");
+    gfx->println("GREEN");
     delay(2000);
 
     gfx->fillScreen(BLUE);
     gfx->setCursor(100, 100);
-    gfx->printf("BLUE");
+    gfx->println("BLUE");
     delay(2000);
 }
