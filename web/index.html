@@ -1,92 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Clock</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three-Line Menu with Icons</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome for icons -->
 
-        #clock {
-            font-size: 3rem;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .options-menu {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #f2f2f2;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-            z-index: 1;
-        }
-
-        .options-menu.show {
-            display: block;
-        }
-
-        .options-menu-bar {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-
-        .options-menu-bar .bar {
-            width: 25px;
-            height: 3px;
-            background-color: black;
-            margin: 4px 0;
-        }
-    </style>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+    }
+    .menu-icon {
+        display: block;
+        width: 40px;
+        height: 40px;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        cursor: pointer;
+        z-index: 1000;
+    }
+    .line {
+        width: 30px;
+        height: 3px;
+        background-color: #333;
+        margin: 6px auto;
+        transition: all 0.3s ease;
+    }
+    .menu-icon.open .line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+    .menu-icon.open .line:nth-child(2) {
+        opacity: 0;
+    }
+    .menu-icon.open .line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+    .menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 98%;
+        width: 3%; /* Half of the screen */
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+    .menu.open {
+        display: block;
+    }
+    .menu-content {
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #fff;
+    }
+    .menu-content ul {
+        list-style-type: none;
+        padding: 0;
+    }
+    .menu-content li {
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+    .menu-content a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 20px;
+    }
+    .additional-item::after {
+        content: '\2714'; /* Unicode character for tick mark */
+        margin-left: 5px;
+        display: none; /* Initially hide the tick mark */
+    }
+    .additional-item.ticked::after {
+        display: inline-block; /* Show the tick mark when ticked */
+    }
+    .clock {
+        font-size: 48px;
+    }
+    .menu-icon i {
+        font-size: 24px;
+        color: #333;
+    }
+</style>
 </head>
 <body>
-    <div id="clock"></div>
-    <div class="options-menu" id="optionsMenu">
-        <!-- Your options content here -->
-        <p>Option 1</p>
-        <p>Option 2</p>
-        <p>Option 3</p>
-    </div>
-    <div class="options-menu-bar" onclick="toggleOptionsMenu()">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-    </div>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('clock').textContent = timeString;
-        }
+<div class="menu-icon" onclick="toggleMenu()">
+    <div class="line"></div>
+    <div class="line"></div>
+    <div class="line"></div>
+</div>
 
-        function toggleOptionsMenu() {
-            const optionsMenu = document.getElementById('optionsMenu');
-            optionsMenu.classList.toggle('show');
-        }
+<div class="menu" id="menu">
+    <div class="menu-content">
+        <ul>
+            <li class="additional-item" onclick="toggleTick(this)">
+                <i class="fas fa-home"></i> <!-- Font Awesome icon -->
+            </li>
+            <li class="additional-item" onclick="toggleTick(this)">
+                <i class="fas fa-user"></i> <!-- Font Awesome icon -->
+            </li>
+            <!-- Add more items as needed -->
+        </ul>
+    </div>
+</div>
+
+<div class="clock" id="clock"></div> <!-- Digital clock placed in the middle -->
+
+<script>
+    function toggleMenu() {
+        var menu = document.getElementById("menu");
+        menu.classList.toggle("open");
+    }
+
+    function toggleTick(item) {
+        item.classList.toggle("ticked");
+    }
+
+    // Function to update the clock
+    function updateClock() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+
+        // Pad single digit minutes and seconds with leading zeros
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        // Update the clock element with the current time
+        var clockElement = document.getElementById('clock');
+        clockElement.textContent = hours + ':' + minutes + ':' + seconds;
 
         // Update the clock every second
-        setInterval(updateClock, 1000);
+        setTimeout(updateClock, 1000);
+    }
 
-        // Initial call to display the clock immediately
-        updateClock();
-    </script>
+    // Initial call to update clock when the page loads
+    updateClock();
+</script>
+
 </body>
 </html>
