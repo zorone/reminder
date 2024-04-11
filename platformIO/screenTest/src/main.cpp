@@ -45,7 +45,6 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 
 #define ARDUINO_MAIN
 
-#include <Arduino.h>
 #include <Arduino_GFX_Library.h>
 
 /*******************************************************************************
