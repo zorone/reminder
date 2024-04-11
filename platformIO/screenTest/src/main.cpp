@@ -70,13 +70,12 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-// #define TFT_PORTLOW  12       // PORTL
-// #define TFT_PORTHIGH  3       // PORTC
-// ; It won't work. Maybe there are some bugs going on?
+#define TFT_PORTLOW  11       // PORTL
+#define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
-Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 47, 46, 45, 44, 43, 42, 41, 40, 37, 36, 35, 34, 33, 32, 31, 30);
+Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
 
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
 Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
@@ -98,7 +97,7 @@ uint8_t getNumberOfNeighbors(int x, int y);
 #define GRIDY 40
 #define CELLXY 8
 
-#define GEN_DELAY 500
+#define GEN_DELAY 0
 
 //Current grid
 int8_t grid[GRIDX][GRIDY];
