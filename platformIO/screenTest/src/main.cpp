@@ -70,8 +70,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-#define TFT_PORTLOW PORTL        // PORTA
-#define TFT_PORTHIGH PORTC       // PORTC
+#define TFT_PORTLOW DDRL        // PORTA
+#define TFT_PORTHIGH DDRC       // PORTC
 #define TFT_RESET 2
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
