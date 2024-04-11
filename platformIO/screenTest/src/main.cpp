@@ -43,8 +43,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   (Actually, maybe processor get too hot? If that the case, we should lower baud rates a bit.)
 */
 
-#include <TFT_eSPI.h>
-#include "config.h"
+#include <Arduino_GFX_Library.h>
 
 /*******************************************************************************
  * Start of Arduino_GFX setting
@@ -67,7 +66,19 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  * Teensy 4.1 dev board        : CS: 39, DC: 41, RST: 40, BL: 22, SCK: 13, MOSI: 11, MISO: 12
  ******************************************************************************/
 
-TFT_eSPI tft = TFT_eSPI();
+#define TFT_DC    5          // TFT_RS
+#define TFT_CS    4
+#define TFT_WR    3
+#define TFT_RD    -1         // connected to 3V3
+#define TFT_PORTLOW PORTL        // PORTA
+#define TFT_PORTHIGH PORTC       // PORTC
+#define TFT_RESET 2
+
+/* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
+Arduino_DataBus *bus = new Arduino_AVRPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, TFT_PORTLOW, TFT_PORTHIGH);
+
+/* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
+Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
 
 /*******************************************************************************
  * End of Arduino_GFX setting
@@ -106,30 +117,34 @@ void setup()   {
   Serial.println("Conway's Game of Life Demo");
 
   //Set up the display
-  tft.init();
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(1);
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(0, 0);
+  if(!gfx->begin()){
+    Serial.println("gfx->begin() failed!");
+  }
+
+  gfx->setRotation(3);
+  gfx->fillScreen(BLACK);
+  gfx->setTextSize(1);
+  gfx->setTextColor(WHITE);
+  gfx->setCursor(0, 0);
+
 }
 
 void loop() {
 
   //Display a simple splash screen
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextSize(2);
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(40, 5);
-  tft.println(F("Arduino"));
-  tft.setCursor(35, 25);
-  tft.println(F("Cellular"));
-  tft.setCursor(35, 45);
-  tft.println(F("Automata"));
+  gfx->fillScreen(BLACK);
+  gfx->setTextSize(2);
+  gfx->setTextColor(WHITE);
+  gfx->setCursor(40, 5);
+  gfx->println(F("Arduino"));
+  gfx->setCursor(35, 25);
+  gfx->println(F("Cellular"));
+  gfx->setCursor(35, 45);
+  gfx->println(F("Automata"));
 
   delay(1000);
 
-  tft.fillScreen(TFT_BLACK);
+  gfx->fillScreen(BLACK);
 
   initGrid();
 
@@ -155,13 +170,13 @@ void loop() {
 //Draws the grid on the display
 void drawGrid(void) {
 
-  uint16_t color = TFT_WHITE;
+  uint16_t color = WHITE;
   for (int16_t x = 1; x < GRIDX - 1; x++) {
     for (int16_t y = 1; y < GRIDY - 1; y++) {
       if ((grid[x][y]) != (newgrid[x][y])) {
         if (newgrid[x][y] == 1) color = 0xFFFF; //random(0xFFFF);
         else color = 0;
-        tft.fillRect(CELLXY * x, CELLXY * y, CELLXY, CELLXY, color);
+        gfx->fillRect(CELLXY * x, CELLXY * y, CELLXY, CELLXY, color);
       }
     }
   }
