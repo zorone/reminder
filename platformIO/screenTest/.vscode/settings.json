@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "wiring_private.h": "c",
+        "iom2560.h": "c"
+    }
+}
