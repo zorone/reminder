@@ -83,174 +83,360 @@ Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, f
 /*******************************************************************************
  * End of Arduino_GFX setting
  ******************************************************************************/
+#define BACKGROUND BLACK
+#define MARK_COLOR WHITE
+#define SUBMARK_COLOR DARKGREY // LIGHTGREY
+#define HOUR_COLOR WHITE
+#define MINUTE_COLOR BLUE // LIGHTGREY
+#define SECOND_COLOR RED
 
-void drawGrid(void);
-void initGrid(void);
-void computeCA();
-uint8_t getNumberOfNeighbors(int x, int y);
+#define SIXTIETH 0.016666667
+#define TWELFTH 0.08333333
+#define SIXTIETH_RADIAN 0.10471976
+#define TWELFTH_RADIAN 0.52359878
+#define RIGHT_ANGLE_RADIAN 1.5707963
 
-//#define GRIDX 80
-//#define GRIDY 60
-//#define CELLXY 4
+static uint8_t conv2d(const char *p);
+void draw_round_clock_mark(int16_t innerR1, int16_t outerR1, int16_t innerR2, int16_t outerR2, int16_t innerR3, int16_t outerR3);
+void draw_square_clock_mark(int16_t innerR1, int16_t outerR1, int16_t innerR2, int16_t outerR2, int16_t innerR3, int16_t outerR3);
+void redraw_hands_cached_draw_and_erase();
+void draw_and_erase_cached_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t color, int16_t *cache, int16_t cache_len, bool cross_check_second, bool cross_check_hour);
+void write_cache_pixel(int16_t x, int16_t y, int16_t color, bool cross_check_second, bool cross_check_hour);
 
-#define GRIDX 60
-#define GRIDY 40
-#define CELLXY 8
+static uint8_t conv2d(const char *p)
+{
+  uint8_t v = 0;
+  return (10 * (*p - '0')) + (*++p - '0');
+}
 
-#define GEN_DELAY 100
+static int16_t w, h, center;
+static int16_t hHandLen, mHandLen, sHandLen, markLen;
+static float sdeg, mdeg, hdeg;
+static int16_t osx = 0, osy = 0, omx = 0, omy = 0, ohx = 0, ohy = 0; // Saved H, M, S x & y coords
+static int16_t nsx, nsy, nmx, nmy, nhx, nhy;                         // H, M, S x & y coords
+static int16_t xMin, yMin, xMax, yMax;                               // redraw range
+static int16_t hh, mm, ss;
+static unsigned long targetTime; // next action time
 
-//Current grid
-int8_t grid[GRIDX][GRIDY];
+static int16_t *cached_points;
+static uint16_t cached_points_idx = 0;
+static int16_t *last_cached_point;
 
-//The new grid for the next generation
-int8_t newgrid[GRIDX][GRIDY];
-
-//Number of generations
-#define NUMGEN 600
-
-uint16_t genCount = 0;
-
-void setup()   {
-
+void setup(void)
+{
   Serial.begin(115200);
-  Serial.println("Arduino_GFX testing");
-  Serial.println("Conway's Game of Life Demo");
+  // Serial.setDebugOutput(true);
+  // while(!Serial);
+  Serial.println("Arduino_GFX Clock example");
 
-  //Set up the display
-  if(!gfx->begin()){
+#ifdef GFX_EXTRA_PRE_INIT
+  GFX_EXTRA_PRE_INIT();
+#endif
+
+  // Init Display
+  if (!gfx->begin())
+  {
     Serial.println("gfx->begin() failed!");
   }
+  gfx->fillScreen(BACKGROUND);
 
-  gfx->setRotation(3);
-  gfx->fillScreen(BLACK);
-  gfx->setTextSize(1);
-  gfx->setTextColor(WHITE);
-  gfx->setCursor(0, 0);
+#ifdef GFX_BL
+  pinMode(GFX_BL, OUTPUT);
+  digitalWrite(GFX_BL, HIGH);
+#endif
 
-}
-
-void loop() {
-
-  //Display a simple splash screen
-  gfx->fillScreen(BLACK);
-  gfx->setTextSize(2);
-  gfx->setTextColor(WHITE);
-  gfx->setCursor(40, 5);
-  gfx->println(F("Arduino"));
-  gfx->setCursor(35, 25);
-  gfx->println(F("Cellular"));
-  gfx->setCursor(35, 45);
-  gfx->println(F("Automata"));
-
-  delay(1000);
-
-  gfx->fillScreen(BLACK);
-
-  initGrid();
-
-  genCount = NUMGEN;
-
-  drawGrid();
-
-  //Compute generations
-  for (uint16_t gen = 0; gen < genCount; gen++)
+  // init LCD constant
+  w = gfx->width();
+  h = gfx->height();
+  if (w < h)
   {
-    computeCA();
-    drawGrid();
-    delay(GEN_DELAY);
-    for (int16_t x = 1; x < GRIDX-1; x++) {
-      for (int16_t y = 1; y < GRIDY-1; y++) {
-        grid[x][y] = newgrid[x][y];
-      }
-    }
-
+    center = w / 2;
   }
+  else
+  {
+    center = h / 2;
+  }
+  hHandLen = center * 3 / 8;
+  mHandLen = center * 2 / 3;
+  sHandLen = center * 5 / 6;
+  markLen = sHandLen / 6;
+  cached_points = (int16_t *)malloc((hHandLen + 1 + mHandLen + 1 + sHandLen + 1) * 2 * 2);
+
+  // Draw 60 clock marks
+  draw_round_clock_mark(
+      // draw_square_clock_mark(
+      center - markLen, center,
+      center - (markLen * 2 / 3), center,
+      center - (markLen / 2), center);
+
+  hh = conv2d(__TIME__);
+  mm = conv2d(__TIME__ + 3);
+  ss = conv2d(__TIME__ + 6);
+
+  targetTime = ((millis() / 1000) + 1) * 1000;
 }
 
-//Draws the grid on the display
-void drawGrid(void) {
-
-  uint16_t color = WHITE;
-  for (int16_t x = 1; x < GRIDX - 1; x++) {
-    for (int16_t y = 1; y < GRIDY - 1; y++) {
-      if ((grid[x][y]) != (newgrid[x][y])) {
-        if (newgrid[x][y] == 1) color = 0xFFFF; //random(0xFFFF);
-        else color = 0;
-        gfx->fillRect(CELLXY * x, CELLXY * y, CELLXY, CELLXY, color);
-      }
-    }
-  }
-}
-
-//Initialise Grid
-void initGrid(void) {
-  for (int16_t x = 0; x < GRIDX; x++) {
-    for (int16_t y = 0; y < GRIDY; y++) {
-      newgrid[x][y] = 0;
-
-      if (x == 0 || x == GRIDX - 1 || y == 0 || y == GRIDY - 1) {
-        grid[x][y] = 0;
-      }
-      else {
-        if (random(3) == 1)
-          grid[x][y] = 1;
-        else
-          grid[x][y] = 0;
-      }
-
-    }
-  }
-}
-
-//Compute the CA. Basically everything related to CA starts here
-void computeCA() {
-  for (int16_t x = 1; x < GRIDX; x++) {
-    for (int16_t y = 1; y < GRIDY; y++) {
-      uint8_t neighbors = getNumberOfNeighbors(x, y);
-      if (grid[x][y] == 1 && (neighbors == 2 || neighbors == 3 ))
+void loop()
+{
+  unsigned long cur_millis = millis();
+  if (cur_millis >= targetTime)
+  {
+    targetTime += 1000;
+    ss++; // Advance second
+    if (ss == 60)
+    {
+      ss = 0;
+      mm++; // Advance minute
+      if (mm > 59)
       {
-        newgrid[x][y] = 1;
+        mm = 0;
+        hh++; // Advance hour
+        if (hh > 23)
+        {
+          hh = 0;
+        }
       }
-      else if (grid[x][y] == 1)  newgrid[x][y] = 0;
-      if (grid[x][y] == 0 && (neighbors == 3))
-      {
-        newgrid[x][y] = 1;
-      }
-      else if (grid[x][y] == 0) newgrid[x][y] = 0;
     }
+  }
+
+  // Pre-compute hand degrees, x & y coords for a fast screen update
+  sdeg = SIXTIETH_RADIAN * ((0.001 * (cur_millis % 1000)) + ss); // 0-59 (includes millis)
+  nsx = cos(sdeg - RIGHT_ANGLE_RADIAN) * sHandLen + center;
+  nsy = sin(sdeg - RIGHT_ANGLE_RADIAN) * sHandLen + center;
+  if ((nsx != osx) || (nsy != osy))
+  {
+    mdeg = (SIXTIETH * sdeg) + (SIXTIETH_RADIAN * mm); // 0-59 (includes seconds)
+    hdeg = (TWELFTH * mdeg) + (TWELFTH_RADIAN * hh);   // 0-11 (includes minutes)
+    mdeg -= RIGHT_ANGLE_RADIAN;
+    hdeg -= RIGHT_ANGLE_RADIAN;
+    nmx = cos(mdeg) * mHandLen + center;
+    nmy = sin(mdeg) * mHandLen + center;
+    nhx = cos(hdeg) * hHandLen + center;
+    nhy = sin(hdeg) * hHandLen + center;
+
+    // redraw hands
+    redraw_hands_cached_draw_and_erase();
+
+    ohx = nhx;
+    ohy = nhy;
+    omx = nmx;
+    omy = nmy;
+    osx = nsx;
+    osy = nsy;
+
+    delay(1);
   }
 }
 
-// Check the Moore neighbourhood
-uint8_t getNumberOfNeighbors(int x, int y) {
-  int a = x-1;
-  int b = x+1;
-  int c = y-1;
-  int d = y+1;
-  return grid[a][y] + grid[a][c] + grid[x][c] + grid[b][c] + grid[b][y] + grid[b][d] + grid[x][d] + grid[a][d];
+void draw_round_clock_mark(int16_t innerR1, int16_t outerR1, int16_t innerR2, int16_t outerR2, int16_t innerR3, int16_t outerR3)
+{
+  float x, y;
+  int16_t x0, x1, y0, y1, innerR, outerR;
+  uint16_t c;
+
+  for (uint8_t i = 0; i < 60; i++)
+  {
+    if ((i % 15) == 0)
+    {
+      innerR = innerR1;
+      outerR = outerR1;
+      c = MARK_COLOR;
+    }
+    else if ((i % 5) == 0)
+    {
+      innerR = innerR2;
+      outerR = outerR2;
+      c = MARK_COLOR;
+    }
+    else
+    {
+      innerR = innerR3;
+      outerR = outerR3;
+      c = SUBMARK_COLOR;
+    }
+
+    mdeg = (SIXTIETH_RADIAN * i) - RIGHT_ANGLE_RADIAN;
+    x = cos(mdeg);
+    y = sin(mdeg);
+    x0 = x * outerR + center;
+    y0 = y * outerR + center;
+    x1 = x * innerR + center;
+    y1 = y * innerR + center;
+
+    gfx->drawLine(x0, y0, x1, y1, c);
+  }
 }
 
-/*
-   The MIT License (MIT)
+void draw_square_clock_mark(int16_t innerR1, int16_t outerR1, int16_t innerR2, int16_t outerR2, int16_t innerR3, int16_t outerR3)
+{
+  float x, y;
+  int16_t x0, x1, y0, y1, innerR, outerR;
+  uint16_t c;
 
-   Copyright (c) 2016 RuntimeProjects.com
+  for (uint8_t i = 0; i < 60; i++)
+  {
+    if ((i % 15) == 0)
+    {
+      innerR = innerR1;
+      outerR = outerR1;
+      c = MARK_COLOR;
+    }
+    else if ((i % 5) == 0)
+    {
+      innerR = innerR2;
+      outerR = outerR2;
+      c = MARK_COLOR;
+    }
+    else
+    {
+      innerR = innerR3;
+      outerR = outerR3;
+      c = SUBMARK_COLOR;
+    }
 
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is
-   furnished to do so, subject to the following conditions:
+    if ((i >= 53) || (i < 8))
+    {
+      x = tan(SIXTIETH_RADIAN * i);
+      x0 = center + (x * outerR);
+      y0 = center + (1 - outerR);
+      x1 = center + (x * innerR);
+      y1 = center + (1 - innerR);
+    }
+    else if (i < 23)
+    {
+      y = tan((SIXTIETH_RADIAN * i) - RIGHT_ANGLE_RADIAN);
+      x0 = center + (outerR);
+      y0 = center + (y * outerR);
+      x1 = center + (innerR);
+      y1 = center + (y * innerR);
+    }
+    else if (i < 38)
+    {
+      x = tan(SIXTIETH_RADIAN * i);
+      x0 = center - (x * outerR);
+      y0 = center + (outerR);
+      x1 = center - (x * innerR);
+      y1 = center + (innerR);
+    }
+    else if (i < 53)
+    {
+      y = tan((SIXTIETH_RADIAN * i) - RIGHT_ANGLE_RADIAN);
+      x0 = center + (1 - outerR);
+      y0 = center - (y * outerR);
+      x1 = center + (1 - innerR);
+      y1 = center - (y * innerR);
+    }
+    gfx->drawLine(x0, y0, x1, y1, c);
+  }
+}
 
-   The above copyright notice and this permission notice shall be included in all
-   copies or substantial portions of the Software.
+void redraw_hands_cached_draw_and_erase()
+{
+  gfx->startWrite();
+  draw_and_erase_cached_line(center, center, nsx, nsy, SECOND_COLOR, cached_points, sHandLen + 1, false, false);
+  draw_and_erase_cached_line(center, center, nhx, nhy, HOUR_COLOR, cached_points + ((sHandLen + 1) * 2), hHandLen + 1, true, false);
+  draw_and_erase_cached_line(center, center, nmx, nmy, MINUTE_COLOR, cached_points + ((sHandLen + 1 + hHandLen + 1) * 2), mHandLen + 1, true, true);
+  gfx->endWrite();
+}
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
-*/
+void draw_and_erase_cached_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t color, int16_t *cache, int16_t cache_len, bool cross_check_second, bool cross_check_hour)
+{
+#if defined(ESP8266)
+  yield();
+#endif
+  bool steep = _diff(y1, y0) > _diff(x1, x0);
+  if (steep)
+  {
+    _swap_int16_t(x0, y0);
+    _swap_int16_t(x1, y1);
+  }
 
+  int16_t dx, dy;
+  dx = _diff(x1, x0);
+  dy = _diff(y1, y0);
+
+  int16_t err = dx / 2;
+  int8_t xstep = (x0 < x1) ? 1 : -1;
+  int8_t ystep = (y0 < y1) ? 1 : -1;
+  x1 += xstep;
+  int16_t x, y, ox, oy;
+  for (uint16_t i = 0; i <= dx; i++)
+  {
+    if (steep)
+    {
+      x = y0;
+      y = x0;
+    }
+    else
+    {
+      x = x0;
+      y = y0;
+    }
+    ox = *(cache + (i * 2));
+    oy = *(cache + (i * 2) + 1);
+    if ((x == ox) && (y == oy))
+    {
+      if (cross_check_second || cross_check_hour)
+      {
+        write_cache_pixel(x, y, color, cross_check_second, cross_check_hour);
+      }
+    }
+    else
+    {
+      write_cache_pixel(x, y, color, cross_check_second, cross_check_hour);
+      if ((ox > 0) || (oy > 0))
+      {
+        write_cache_pixel(ox, oy, BACKGROUND, cross_check_second, cross_check_hour);
+      }
+      *(cache + (i * 2)) = x;
+      *(cache + (i * 2) + 1) = y;
+    }
+    if (err < dy)
+    {
+      y0 += ystep;
+      err += dx;
+    }
+    err -= dy;
+    x0 += xstep;
+  }
+  for (uint16_t i = dx + 1; i < cache_len; i++)
+  {
+    ox = *(cache + (i * 2));
+    oy = *(cache + (i * 2) + 1);
+    if ((ox > 0) || (oy > 0))
+    {
+      write_cache_pixel(ox, oy, BACKGROUND, cross_check_second, cross_check_hour);
+    }
+    *(cache + (i * 2)) = 0;
+    *(cache + (i * 2) + 1) = 0;
+  }
+}
+
+void write_cache_pixel(int16_t x, int16_t y, int16_t color, bool cross_check_second, bool cross_check_hour)
+{
+  int16_t *cache = cached_points;
+  if (cross_check_second)
+  {
+    for (uint16_t i = 0; i <= sHandLen; i++)
+    {
+      if ((x == *(cache++)) && (y == *(cache)))
+      {
+        return;
+      }
+      cache++;
+    }
+  }
+  if (cross_check_hour)
+  {
+    cache = cached_points + ((sHandLen + 1) * 2);
+    for (uint16_t i = 0; i <= hHandLen; i++)
+    {
+      if ((x == *(cache++)) && (y == *(cache)))
+      {
+        return;
+      }
+      cache++;
+    }
+  }
+  gfx->writePixel(x, y, color);
+}
