@@ -43,8 +43,6 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   (Actually, maybe processor get too hot? If that the case, we should lower baud rates a bit.)
 */
 
-#define ARDUINO_MAIN
-
 #include <Arduino_GFX_Library.h>
 
 /*******************************************************************************
@@ -72,8 +70,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-#define TFT_PORTLOW  PL       // PORTL
-#define TFT_PORTHIGH  PC       // PORTC
+#define TFT_PORTLOW  12       // PORTL
+#define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
