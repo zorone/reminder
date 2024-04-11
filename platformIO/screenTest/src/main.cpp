@@ -78,7 +78,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
 
 /* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
-Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
+Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 2 /* rotation */, false /* IPS */);
 
 /*******************************************************************************
  * End of Arduino_GFX setting
