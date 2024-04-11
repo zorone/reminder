@@ -360,7 +360,7 @@ void draw_and_erase_cached_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
   int8_t ystep = (y0 < y1) ? 1 : -1;
   x1 += xstep;
   int16_t x, y, ox, oy;
-  for (uint16_t i = 0; i <= dx; i++)
+  for (int16_t i = 0; i <= dx; i++)
   {
     if (steep)
     {
@@ -399,7 +399,7 @@ void draw_and_erase_cached_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
     err -= dy;
     x0 += xstep;
   }
-  for (uint16_t i = dx + 1; i < cache_len; i++)
+  for (int16_t i = dx + 1; i < cache_len; i++)
   {
     ox = *(cache + (i * 2));
     oy = *(cache + (i * 2) + 1);
