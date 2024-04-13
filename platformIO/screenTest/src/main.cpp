@@ -158,22 +158,15 @@ void shiftBGcolor(int colorIdx){
 
 void debugPinData(){
   
-  String dbgLog;
   String date = __DATE__;
   String time = __TIME__;
-  dbgLog += date;
-  dbgLog += " ";
-  dbgLog += time;
-  dbgLog += " ";
+  Serial.print(date + " " + time + " ");
 
 
   for(int i = 0; i < dbgPinCount; i++){
     dbgPinValue[i] = digitalRead(dbgPin[i]);
-    dbgLog += " ";
-    dbgLog += dbgPinName[i];
-    dbgLog += ": ";
-    dbgLog += dbgPinValue[i];
+    Serial.print(" " + dbgPinName[i] + ": " + dbgPinValue[i]);
   }
 
-  Serial.println(dbgLog);
+  Serial.println();
 }
