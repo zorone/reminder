@@ -74,6 +74,23 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
+#define TFT_D0   49
+#define TFT_D1   48
+#define TFT_D2   47
+#define TFT_D3   46
+#define TFT_D4   45
+#define TFT_D5   44
+#define TFT_D6   43
+#define TFT_D7   42
+#define TFT_D8   37
+#define TFT_D9   36
+#define TFT_D10  35
+#define TFT_D11  34
+#define TFT_D12  33
+#define TFT_D13  32
+#define TFT_D14  31
+#define TFT_D15  30
+
 /* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
 Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
 
@@ -90,6 +107,18 @@ Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, f
 int8_t colorIdx = 0;
 int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
 int8_t colorSetSize = sizeof(colorSet) / 16;
+
+int8_t dbgPin[] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
+                   TFT_D0, TFT_D1, TFT_D2, TFT_D3, TFT_D4, TFT_D5, TFT_D6, TFT_D7,
+                   TFT_D8, TFT_D9, TFT_D10, TFT_D11, TFT_D12, TFT_D13, TFT_D14, TFT_D15};
+String dbgPinName[] = {"DC", "CS", "WR", "RST",
+                     "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
+                     "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15"};
+
+int8_t dbgPinCount = sizeof(dbgPin) / 8;
+int8_t *dbgPinValue = (int8_t *) malloc(8 * dbgPinCount);
+memset(dbgPinValue, -1);
+
 
 void shiftBGcolor(int colorIdx);
 void debugPin();
@@ -128,5 +157,7 @@ void shiftBGcolor(int colorIdx){
 }
 
 void debugPin(){
-  String dbLog = strncat(strncat(__DATE__, " ", 12), __TIME__, 20);
+  
+  String date = __DATE__;
+  String time = __TIME__;
 }
