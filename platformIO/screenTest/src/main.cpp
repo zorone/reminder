@@ -120,7 +120,7 @@ int8_t dbgPinCount = dbgPinArrSize / 8;
 int8_t *dbgPinValue = (int8_t *) malloc(dbgPinArrSize);
 
 void shiftBGcolor(int colorIdx);
-void debugPin();
+void debugPinData();
 
 void setup(void)
 {
@@ -142,7 +142,7 @@ void setup(void)
 void loop()
 {
   shiftBGcolor(colorIdx);
-  debugPin();
+  debugPinData();
   delay(1000);
 }
 
