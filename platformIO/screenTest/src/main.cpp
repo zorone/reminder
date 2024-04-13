@@ -10,15 +10,19 @@
 // at the root directory of the project.
 // Before debugging.
 
+// Make sure pio is in System Variables
+// %USERPROFILE%\.platformio\penv\Scripts
+
 void setup()
 {
-  pinMode(LED_BUILTIN, OUTPUT);
   // initialize the avr-debugger
   debug_init();
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 void loop()
 {
+  breakpoint();
   digitalWrite(LED_BUILTIN, HIGH);
   delay(300);
   digitalWrite(LED_BUILTIN, LOW);
