@@ -87,16 +87,18 @@ Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, f
 #define MARK_COLOR WHITE
 #define SUBMARK_COLOR DARKGREY // LIGHTGREY
 
-int color = BLACK;
+int8_t colorIdx = 0;
+int8_t colorSet[] = {BLACK, RED, GREEN, BLUE};
+int8_t colorSetSize = sizeof(colorSet) / 8;
 
-void shiftBGcolor(int color);
+void shiftBGcolor(int colorIdx);
 
 void setup(void)
 {
   Serial.begin(115200);
   // Serial.setDebugOutput(true);
   // while(!Serial);
-  Serial.println("Arduino_GFX Clock example");
+  Serial.println("Arduino_GFX RGB shift example");
 
   // Init Display
   if (!gfx->begin())
@@ -110,12 +112,16 @@ void setup(void)
 
 void loop()
 {
-  shiftBGcolor(color);
+  shiftBGcolor(colorIdx);
   delay(1000);
 }
 
-void shiftBGcolor(int color){
-  int colorSet[] = {BLACK, RED, GREEN, BLUE};
-  int colorSetSize = sizeof(colorSet)/sizeof(int);
+void shiftBGcolor(int colorIdx){
+  colorIdx++;
 
+  if(colorIdx > colorSetSize){
+    colorIdx = 1;
+  }
+
+  gfx->fillScreen(colorSet[colorIdx]);
 }
