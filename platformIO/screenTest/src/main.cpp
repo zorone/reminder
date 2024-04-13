@@ -88,8 +88,8 @@ Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, f
 #define SUBMARK_COLOR DARKGREY // LIGHTGREY
 
 int8_t colorIdx = 0;
-int8_t colorSet[] = {BLACK, RED, GREEN, BLUE};
-int8_t colorSetSize = sizeof(colorSet) / 8;
+int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
+int8_t colorSetSize = sizeof(colorSet) / 16;
 
 void shiftBGcolor(int colorIdx);
 
