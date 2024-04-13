@@ -118,8 +118,6 @@ String dbgPinName[] = {"DC", "CS", "WR", "RST",
 int16_t dbgPinArrSize = sizeof(dbgPin);
 int8_t dbgPinCount = dbgPinArrSize / 8;
 int8_t *dbgPinValue = (int8_t *) malloc(dbgPinArrSize);
-memset(dbgPinValue, 1, dbgPinArrSize);
-
 
 void shiftBGcolor(int colorIdx);
 void debugPin();
