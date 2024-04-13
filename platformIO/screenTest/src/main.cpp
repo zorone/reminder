@@ -124,7 +124,7 @@ void debugPinData();
 
 void setup(void)
 {
-  Serial.begin(250000);
+  Serial.begin(115200);
   // Serial.setDebugOutput(true);
   // while(!Serial);
   Serial.println("Arduino_GFX RGB shift example");
