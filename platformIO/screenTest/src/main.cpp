@@ -128,5 +128,5 @@ void shiftBGcolor(int colorIdx){
 }
 
 void debugPin(){
-  Serial.print(__DATE__ + __TIME__);
+  String dbLog = strncat(strncat(__DATE__, " ", 12), __TIME__, 20);
 }
