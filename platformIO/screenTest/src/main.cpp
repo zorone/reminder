@@ -115,9 +115,10 @@ String dbgPinName[] = {"DC", "CS", "WR", "RST",
                      "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
                      "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15"};
 
-int8_t dbgPinCount = sizeof(dbgPin) / 8;
-int8_t *dbgPinValue = (int8_t *) malloc(8 * dbgPinCount);
-memset(dbgPinValue, -1);
+int16_t dbgPinArrSize = sizeof(dbgPin);
+int8_t dbgPinCount = dbgPinArrSize / 8;
+int8_t *dbgPinValue = (int8_t *) malloc(dbgPinArrSize);
+memset(dbgPinValue, 1, dbgPinArrSize);
 
 
 void shiftBGcolor(int colorIdx);
@@ -143,6 +144,7 @@ void setup(void)
 void loop()
 {
   shiftBGcolor(colorIdx);
+  debugPin();
   delay(1000);
 }
 
@@ -156,8 +158,24 @@ void shiftBGcolor(int colorIdx){
   gfx->fillScreen(colorSet[colorIdx]);
 }
 
-void debugPin(){
+void debugPinData(){
   
+  String dbgLog;
   String date = __DATE__;
   String time = __TIME__;
+  dbgLog += date;
+  dbgLog += " ";
+  dbgLog += time;
+  dbgLog += " ";
+
+
+  for(int i = 0; i < dbgPinCount; i++){
+    dbgPinValue[i] = digitalRead(dbgPin[i]);
+    dbgLog += " ";
+    dbgLog += dbgPinName[i];
+    dbgLog += ": ";
+    dbgLog += dbgPinValue[i];
+  }
+
+  Serial.println(dbgLog);
 }
