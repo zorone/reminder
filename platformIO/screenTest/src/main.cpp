@@ -92,6 +92,7 @@ int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
 int8_t colorSetSize = sizeof(colorSet) / 16;
 
 void shiftBGcolor(int colorIdx);
+void debugPin();
 
 void setup(void)
 {
@@ -124,4 +125,8 @@ void shiftBGcolor(int colorIdx){
   }
 
   gfx->fillScreen(colorSet[colorIdx]);
+}
+
+void debugPin(){
+  Serial.print(__DATE__ + __TIME__);
 }
