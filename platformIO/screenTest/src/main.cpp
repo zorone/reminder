@@ -121,6 +121,7 @@ void setupPin();
 void debugPinData();
 
 void togglePin();
+void setPinIdx();
 
 void setup(void)
 { 
@@ -132,8 +133,9 @@ void setup(void)
 
 void loop()
 {
-  debugPinData();
   togglePin();
+  debugPinData();
+  setPinIdx();
 }
 
 void setupPin(){
@@ -144,14 +146,14 @@ void setupPin(){
 }
 
 void debugPinData(){
-  for(int8_t i = 0; i < 2; i++){
-    dbgPinValue[i] = digitalRead(dbgPin[i]);
-  }
+  dbgPinValue[pinIdx] = digitalRead(dbgPin[pinIdx]);
 }
 
 void togglePin(){
   digitalWrite(dbgPin[pinIdx], pinModeSet);
-  
+}
+
+void setPinIdx(){
   pinIdx++;
   
   if(pinIdx > 2){
