@@ -76,6 +76,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  * Teensy 4.1 dev board        : CS: 39, DC: 41, RST: 40, BL: 22, SCK: 13, MOSI: 11, MISO: 12
  ******************************************************************************/
 
+#define PINCOUNT 20
+
 #define TFT_DC    5          // TFT_RS
 #define TFT_CS    4
 #define TFT_WR    3
@@ -104,16 +106,14 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 int8_t pinIdx = 0;
 int8_t pinModeSet = HIGH;
 
-int8_t dbgPin[] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
+int8_t dbgPin[PINCOUNT] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
                    TFT_D0, TFT_D1, TFT_D2, TFT_D3, TFT_D4, TFT_D5, TFT_D6, TFT_D7,
                    TFT_D8, TFT_D9, TFT_D10, TFT_D11, TFT_D12, TFT_D13, TFT_D14, TFT_D15};
-String dbgPinName[] = {"DC", "CS", "WR", "RST",
+String dbgPinName[PINCOUNT] = {"DC", "CS", "WR", "RST",
                      "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
                      "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15"};
 
-int16_t dbgPinArrSize = sizeof(dbgPin);
-int8_t dbgPinCount = dbgPinArrSize / 8;
-int8_t *dbgPinValue = (int8_t *) malloc(dbgPinArrSize);
+int8_t dbgPinValue[PINCOUNT];
 
 void setupPin();
 void debugPinData();
