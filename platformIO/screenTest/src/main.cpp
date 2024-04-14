@@ -80,7 +80,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 
 #define PINCOUNT 20
 
-#define TFT_DC    5          // TFT_RS
+#define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
@@ -156,7 +156,7 @@ void togglePin(){
 void setPinIdx(){
   pinIdx++;
   
-  if(pinIdx > 2){
+  if(pinIdx >= 2){
     pinIdx = 0;
 
     if(pinModeSet){
