@@ -123,15 +123,12 @@ void togglePin();
 void setup(void)
 {
   debug_init();
-
-  delay(5000);
 }
 
 void loop()
 {
   debugPinData();
   togglePin();
-  delay(1000);
 }
 
 void setupPin(){
