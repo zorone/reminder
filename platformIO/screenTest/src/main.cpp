@@ -51,6 +51,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   (Actually, maybe processor get too hot? If that the case, we should lower baud rates a bit.)
 */
 
+#include <string.h>
+
 #include <Arduino.h>
 #include <avr8-stub.h>
 #include <app_api.h>   // only needed with flash breakpoints
@@ -113,7 +115,9 @@ String dbgPinName[PINCOUNT] = {"DC", "CS", "WR", "RST",
                      "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
                      "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15"};
 
-int8_t dbgPinValue[PINCOUNT];
+int8_t dbgPinValue[PINCOUNT] = {0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0,
+                                 0, 0, 0, 0, 0, 0, 0, 0};
 
 void setupPin();
 void debugPinData();
