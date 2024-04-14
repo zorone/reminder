@@ -54,7 +54,6 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #include <Arduino.h>
 #include <avr8-stub.h>
 #include <app_api.h>   // only needed with flash breakpoints
-#include <Arduino_GFX_Library.h>
 
 /*******************************************************************************
  * Start of Arduino_GFX setting
@@ -102,22 +101,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-/* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
-Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
-
-/* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
-Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
-
-/*******************************************************************************
- * End of Arduino_GFX setting
- ******************************************************************************/
-#define BACKGROUND BLACK
-#define MARK_COLOR WHITE
-#define SUBMARK_COLOR DARKGREY // LIGHTGREY
-
-int8_t colorIdx = 0;
-int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
-int8_t colorSetSize = sizeof(colorSet) / 16;
+int8_t pinIdx = 0;
+int8_t pinModeSet = HIGH;
 
 int8_t dbgPin[] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
                    TFT_D0, TFT_D1, TFT_D2, TFT_D3, TFT_D4, TFT_D5, TFT_D6, TFT_D7,
@@ -130,36 +115,51 @@ int16_t dbgPinArrSize = sizeof(dbgPin);
 int8_t dbgPinCount = dbgPinArrSize / 8;
 int8_t *dbgPinValue = (int8_t *) malloc(dbgPinArrSize);
 
-void shiftBGcolor(int colorIdx);
+void setupPin();
 void debugPinData();
+
+void togglePin();
 
 void setup(void)
 {
   debug_init();
 
-  gfx->fillScreen(BACKGROUND);
   delay(5000);
 }
 
 void loop()
 {
-  shiftBGcolor(colorIdx);
   debugPinData();
+  togglePin();
   delay(1000);
 }
 
-void shiftBGcolor(int colorIdx){
-  colorIdx++;
-
-  if(colorIdx > colorSetSize){
-    colorIdx = 1;
+void setupPin(){
+  for(int8_t i = 0; i < 2; i++){
+    pinMode(dbgPin[i], OUTPUT);
   }
-
-  gfx->fillScreen(colorSet[colorIdx]);
 }
 
 void debugPinData(){
-  for(int i = 0; i < dbgPinCount; i++){
+  for(int8_t i = 0; i < 2; i++){
     dbgPinValue[i] = digitalRead(dbgPin[i]);
   }
+}
+
+void togglePin(){
+  pinIdx++;
+
+  if(pinIdx > 2){
+    pinIdx = 0;
+
+    if(pinModeSet){
+      pinModeSet = LOW;
+    }
+    else{
+      pinModeSet = HIGH;
+    }
+  }
+
+  digitalWrite(dbgPin[pinIdx], pinModeSet);
+
 }
