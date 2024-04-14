@@ -125,7 +125,8 @@ void debugPinData();
 void togglePin();
 
 void setup(void)
-{
+{ 
+  setupPin();
   debug_init();
 }
 
