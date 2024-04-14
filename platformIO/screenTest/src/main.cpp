@@ -79,6 +79,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  ******************************************************************************/
 
 #define PINCOUNT 20
+#define FIRSTPINTEST 2
+#define LASTPINTEST 3
 
 #define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
@@ -105,7 +107,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-int8_t pinIdx = 0;
+int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
 
 int8_t dbgPin[PINCOUNT] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
@@ -139,7 +141,7 @@ void loop()
 }
 
 void setupPin(){
-  for(int8_t i = 0; i < 2; i++){
+  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++){
     pinMode(dbgPin[i], OUTPUT);
     digitalWrite(dbgPin[i], LOW);
   }
@@ -156,8 +158,8 @@ void togglePin(){
 void setPinIdx(){
   pinIdx++;
   
-  if(pinIdx >= 2){
-    pinIdx = 0;
+  if(pinIdx > LASTPINTEST){
+    pinIdx = FIRSTPINTEST;
 
     if(pinModeSet){
       pinModeSet = LOW;
