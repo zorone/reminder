@@ -107,6 +107,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
+int8_t isNotDonePerPinTest = 1;
+
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
 
@@ -135,13 +137,15 @@ void setup(void)
   memset(dbgPinValue, -1, PINCOUNT);
 
   debug_init();
-
-  perPinTest();
-  resetPinTest();
 }
 
 void loop()
 {
+  if(isNotDonePerPinTest){
+    perPinTest();
+    resetPinTest();
+  }
+
   togglePin();
   debugPinData();
   setPinIdx();
@@ -169,6 +173,8 @@ void perPinTest(){
 
     pinIdx++;
   }
+
+  isNotDonePerPinTest = 0;
 }
 
 void debugPinData(){
