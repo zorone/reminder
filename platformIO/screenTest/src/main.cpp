@@ -79,14 +79,14 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  ******************************************************************************/
 
 #define PINCOUNT 20
-#define FIRSTPINTEST -1
-#define LASTPINTEST -1
+#define FIRSTPINTEST 4
+#define LASTPINTEST 7
 
 #define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-#define TFT_PORTLOW  11       // PORTL
+#define TFT_PORTLOW  12       // PORTL
 #define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
