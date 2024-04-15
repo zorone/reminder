@@ -79,8 +79,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  ******************************************************************************/
 
 #define PINCOUNT 20
-#define FIRSTPINTEST 2
-#define LASTPINTEST 3
+#define FIRSTPINTEST -1
+#define LASTPINTEST -1
 
 #define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
