@@ -107,7 +107,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-int8_t isNotDonePerPinTest = -2;
+int8_t isNotDonePerPinTest = 2;
 
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
@@ -174,7 +174,7 @@ void perPinTest(){
     pinIdx++;
   }
 
-  isNotDonePerPinTest++; // Needs to run this function 2 times. First time for debugger to run finished loop() once before actual debug.
+  isNotDonePerPinTest--; // Needs to run this function 2 times. First time for debugger to run finished loop() once before actual debug.
 }
 
 void debugPinData(){
