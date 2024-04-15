@@ -107,7 +107,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-int8_t isNotDonePerPinTest = 2;
+int8_t isNotDonePerPinTest = -2;
 
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
@@ -141,7 +141,8 @@ void setup(void)
 
 void loop()
 {
-  if(isNotDonePerPinTest){
+  if(isNotDonePerPinTest)
+  {
     perPinTest();
     resetPinTest();
   }
@@ -151,20 +152,25 @@ void loop()
   setPinIdx();
 }
 
-void setupPin(){
-  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++){
+void setupPin()
+{
+  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
+  {
     pinMode(dbgPin[i], OUTPUT);
     digitalWrite(dbgPin[i], LOW);
   }
 }
 
-void resetPinTest(){
+void resetPinTest()
+{
   pinIdx = FIRSTPINTEST;
   pinModeSet = HIGH;
 }
 
-void perPinTest(){
-  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++){
+void perPinTest()
+{
+  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
+  {
     pinModeSet = HIGH;
     togglePin();
 
@@ -174,27 +180,33 @@ void perPinTest(){
     pinIdx++;
   }
 
-  isNotDonePerPinTest--; // Needs to run this function 2 times. First time for debugger to run finished loop() once before actual debug.
+  isNotDonePerPinTest++; // Needs to run this function 2 times. First time for debugger to run finished loop() once before actual debug.
 }
 
-void debugPinData(){
+void debugPinData()
+{
   dbgPinValue[pinIdx] = digitalRead(dbgPin[pinIdx]);
 }
 
-void togglePin(){
+void togglePin()
+{
   digitalWrite(dbgPin[pinIdx], pinModeSet);
 }
 
-void setPinIdx(){
+void setPinIdx()
+{
   pinIdx++;
   
-  if(pinIdx > LASTPINTEST){
+  if(pinIdx > LASTPINTEST)
+  {
     pinIdx = FIRSTPINTEST;
 
-    if(pinModeSet){
+    if(pinModeSet)
+    {
       pinModeSet = LOW;
     }
-    else{
+    else
+    {
       pinModeSet = HIGH;
     }
   }
