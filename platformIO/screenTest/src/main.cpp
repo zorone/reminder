@@ -52,7 +52,10 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 */
 
 #include <string.h>
-#include <Arduino_GFX_Library.h>
+
+#include <Arduino.h>
+#include <avr8-stub.h>
+#include <app_api.h>   // only needed with flash breakpoints
 
 /*******************************************************************************
  * Start of Arduino_GFX setting
@@ -76,12 +79,14 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  ******************************************************************************/
 
 #define PINCOUNT 20
+#define FIRSTPINTEST 0
+#define LASTPINTEST 19
 
 #define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-#define TFT_PORTLOW  12       // PORTL
+#define TFT_PORTLOW  11       // PORTL
 #define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
@@ -102,23 +107,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-/* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
-Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
-
-/* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
-Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
-
-/*******************************************************************************
- * End of Arduino_GFX setting
- ******************************************************************************/
-
-#define BACKGROUND BLACK
-#define MARK_COLOR WHITE
-#define SUBMARK_COLOR DARKGREY // LIGHTGREY
-
-int8_t colorIdx = 0;
-int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
-int8_t colorSetSize = sizeof(colorSet) / 16;
+int8_t pinIdx = FIRSTPINTEST;
+int8_t pinModeSet = HIGH;
 
 int8_t dbgPin[PINCOUNT] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
                    TFT_D0, TFT_D1, TFT_D2, TFT_D3, TFT_D4, TFT_D5, TFT_D6, TFT_D7,
@@ -129,39 +119,77 @@ String dbgPinName[PINCOUNT] = {"DC", "CS", "WR", "RST",
 
 int8_t dbgPinValue[PINCOUNT];
 
-void shiftBGcolor(int colorIdx);
+void setupPin();
+void debugPinData();
+void resetPinTest();
+
+void perPinTest();
+
+void togglePin();
+void setPinIdx();
+
 
 void setup(void)
 { 
+  setupPin();
   memset(dbgPinValue, -1, PINCOUNT);
 
-  Serial.begin(115200);
-  // Serial.setDebugOutput(true);
-  // while(!Serial);
-  Serial.println("Arduino_GFX RGB shift example");
+  debug_init();
 
-  // Init Display
-  if (!gfx->begin())
-  {
-    Serial.println("gfx->begin() failed!");
-  }
-
-  gfx->fillScreen(BACKGROUND);
-  delay(5000);
+  perPinTest();
+  resetPinTest();
 }
 
 void loop()
 {
-  shiftBGcolor(colorIdx);
-  delay(1000);
+  togglePin();
+  debugPinData();
+  setPinIdx();
 }
 
-void shiftBGcolor(int colorIdx){
-  colorIdx++;
-
-  if(colorIdx > colorSetSize){
-    colorIdx = 1;
+void setupPin(){
+  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++){
+    pinMode(dbgPin[i], OUTPUT);
+    digitalWrite(dbgPin[i], LOW);
   }
+}
 
-  gfx->fillScreen(colorSet[colorIdx]);
+void resetPinTest(){
+  pinIdx = FIRSTPINTEST;
+  pinModeSet = HIGH;
+}
+
+void perPinTest(){
+  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++){
+    pinModeSet = HIGH;
+    togglePin();
+
+    pinModeSet = LOW;
+    togglePin();
+
+    pinIdx++;
+  }
+}
+
+void debugPinData(){
+  dbgPinValue[pinIdx] = digitalRead(dbgPin[pinIdx]);
+}
+
+void togglePin(){
+  digitalWrite(dbgPin[pinIdx], pinModeSet);
+}
+
+void setPinIdx(){
+  pinIdx++;
+  
+  if(pinIdx > LASTPINTEST){
+    pinIdx = FIRSTPINTEST;
+
+    if(pinModeSet){
+      pinModeSet = LOW;
+    }
+    else{
+      pinModeSet = HIGH;
+    }
+  }
 }
