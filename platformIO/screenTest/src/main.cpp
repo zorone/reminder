@@ -142,13 +142,14 @@ void setup(void)
   memset(dbgPinValue, -1, PINCOUNT);
 
   debug_init();
+
+  loopDelay();
 }
 
 void loop()
 {
   loopCount++;
   
-  loopDelay();
   if(isNotDonePerPinTest)
   {
     perPinTest();
