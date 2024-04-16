@@ -107,6 +107,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
+uint16_t loopCount = 0;
+
 int8_t isNotDonePerPinTest = -5;
 
 int8_t pinIdx = FIRSTPINTEST;
@@ -150,6 +152,8 @@ void loop()
   togglePin();
   debugPinData();
   setPinIdx();
+
+  loopCount++;
 }
 
 void setupPin()
