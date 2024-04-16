@@ -134,16 +134,12 @@ void resetPinTest();
 void togglePin();
 void setPinIdx();
 
-void loopDelay();
-
 void setup(void)
 { 
   setupPin();
   memset(dbgPinValue, -1, PINCOUNT);
 
   debug_init();
-
-  loopDelay();
 
   perPinTest();
   resetPinTest();
@@ -180,6 +176,11 @@ void resetPinTest()
 
 void perPinTest()
 {
+  while(setupDelay < 32)
+  {
+    setupDelay++;
+  }
+  
   for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
   {
     pinModeSet = HIGH;
@@ -215,13 +216,5 @@ void setPinIdx()
     {
       pinModeSet = HIGH;
     }
-  }
-}
-
-void loopDelay()
-{
-  while(setupDelay < 32)
-  {
-    setupDelay++;
   }
 }
