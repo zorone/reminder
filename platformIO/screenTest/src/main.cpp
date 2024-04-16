@@ -190,7 +190,7 @@ void setPinIdx()
 
 void loopDelay()
 {
-  while(setupDelay[0] < 24576)
+  while(setupDelay < 24576)
   {
     setupDelay++;
   }
