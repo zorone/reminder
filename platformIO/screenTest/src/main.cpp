@@ -131,6 +131,7 @@ void debugPinData();
 void resetPinTest();
 
 void loopDelay();
+void innerLoopDelay();
 
 void perPinTest();
 
@@ -227,10 +228,15 @@ void loopDelay()
 {
   while(delayOuterCount < 4)
   {
-    while(delayInnerCount < 32768)
-    {
-      delayInnerCount++;
-    }
+    innerLoopDelay();
     delayOuterCount++;
+  }
+}
+
+void innerLoopDelay(){
+  delayInnerCount = 0;
+  while(delayInnerCount < 32768)
+  {
+    delayInnerCount++;
   }
 }
