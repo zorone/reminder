@@ -143,6 +143,8 @@ void setup(void)
 
 void loop()
 {
+  loopCount++;
+  
   if(loopCount < 65535) return;
   if(isNotDonePerPinTest)
   {
@@ -153,8 +155,6 @@ void loop()
   togglePin();
   debugPinData();
   setPinIdx();
-
-  loopCount++;
 }
 
 void setupPin()
