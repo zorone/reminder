@@ -109,6 +109,9 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 
 uint16_t loopCount = 0;
 
+uint8_t innerDelay = 0;
+uint8_t outerDelay = 0;
+
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
 
@@ -127,6 +130,7 @@ void debugPinData();
 void togglePin();
 void setPinIdx();
 
+void loopDelay();
 
 void setup(void)
 { 
@@ -134,6 +138,8 @@ void setup(void)
   memset(dbgPinValue, -1, PINCOUNT);
 
   debug_init();
+
+  loopDelay();
 }
 
 void loop()
@@ -180,5 +186,18 @@ void setPinIdx()
     {
       pinModeSet = HIGH;
     }
+  }
+}
+
+void loopDelay()
+{
+  while(outerDelay < 2)
+  {
+    innerDelay = 0;
+    while(innerDelay < 32768)
+    {
+      innerDelay++;
+    }
+    outerDelay++;
   }
 }
