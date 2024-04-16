@@ -143,6 +143,7 @@ void setup(void)
 
 void loop()
 {
+  if(loopCount < 65535) continue;
   if(isNotDonePerPinTest)
   {
     perPinTest();
