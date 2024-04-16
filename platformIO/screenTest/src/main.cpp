@@ -108,7 +108,9 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D15  30
 
 uint16_t loopCount = 0;
-uint16_t delayCount = 0;
+
+uint8_t delayOuterCount = 0;
+uint8_t delayInnerCount = 0;
 
 int8_t isNotDonePerPinTest = -1;
 
@@ -223,8 +225,12 @@ void setPinIdx()
 
 void loopDelay()
 {
-  while(delayCount < 120000)
+  while(delayOuterCount < 4)
   {
-    delayCount++;
+    while(delayInnerCount < 32768)
+    {
+      delayInnerCount++;
+    }
+    delayOuterCount++;
   }
 }
