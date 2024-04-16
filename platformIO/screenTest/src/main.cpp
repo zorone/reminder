@@ -109,7 +109,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 
 uint16_t loopCount = 0;
 
-int8_t isNotDonePerPinTest = -5;
+int8_t isNotDonePerPinTest = -1;
 
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
@@ -143,7 +143,7 @@ void setup(void)
 
 void loop()
 {
-  if(loopCount < 65535) continue;
+  if(loopCount < 65535) return;
   if(isNotDonePerPinTest)
   {
     perPinTest();
