@@ -223,7 +223,7 @@ void setPinIdx()
 
 void loopDelay()
 {
-  while(delayCount < 65535)
+  while(delayCount < 120000)
   {
     delayCount++;
   }
