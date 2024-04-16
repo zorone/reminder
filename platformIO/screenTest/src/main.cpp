@@ -108,6 +108,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D15  30
 
 uint16_t loopCount = 0;
+uint16_t delayCount = 0;
 
 int8_t isNotDonePerPinTest = -1;
 
@@ -126,6 +127,8 @@ int8_t dbgPinValue[PINCOUNT];
 void setupPin();
 void debugPinData();
 void resetPinTest();
+
+void loopDelay();
 
 void perPinTest();
 
@@ -215,4 +218,11 @@ void setPinIdx()
       pinModeSet = HIGH;
     }
   }
+}
+
+void loopDelay(){
+
+  loopback:
+    delayCount++;
+    goto loopback;
 }
