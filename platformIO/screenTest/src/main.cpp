@@ -176,7 +176,7 @@ void resetPinTest()
 
 void perPinTest()
 {
-  while(setupDelay < 62500)
+  while(setupDelay < 256)
   {
     setupDelay++;
   }
