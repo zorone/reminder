@@ -179,6 +179,10 @@ void perPinTest()
   while(setupDelay < 256)
   {
     setupDelay++;
+
+    if(setupDelay > 255){
+      break;
+    }
   }
 
   for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
