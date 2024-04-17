@@ -128,6 +128,17 @@ void shiftBGcolor(int colorIdx);
 
 void setup(void)
 {
+    Serial.begin(115200);
+  // Serial.setDebugOutput(true);
+  // while(!Serial);
+  Serial.println("Arduino_GFX RGB shift example");
+
+  // Init Display
+  if (!gfx->begin())
+  {
+    Serial.println("gfx->begin() failed!");
+  }
+  
   gfx->fillScreen(BACKGROUND);
   delay(5000);
 }
@@ -135,7 +146,6 @@ void setup(void)
 void loop()
 {
   shiftBGcolor(colorIdx);
-  debugPinData();
   delay(1000);
 }
 
