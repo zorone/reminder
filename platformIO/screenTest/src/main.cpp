@@ -51,11 +51,8 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
   (Actually, maybe processor get too hot? If that the case, we should lower baud rates a bit.)
 */
 
-#include <string.h>
-
 #include <Arduino.h>
-#include <avr8-stub.h>
-#include <app_api.h>   // only needed with flash breakpoints
+#include <Arduino_GFX_Library.h>
 
 /*******************************************************************************
  * Start of Arduino_GFX setting
@@ -77,10 +74,6 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
  * Seeeduino XIAO dev board    : CS:  3, DC:  2, RST:  1, BL:  0, SCK:  8, MOSI: 10, MISO:  9
  * Teensy 4.1 dev board        : CS: 39, DC: 41, RST: 40, BL: 22, SCK: 13, MOSI: 11, MISO: 12
  ******************************************************************************/
-
-#define PINCOUNT 20
-#define FIRSTPINTEST 0
-#define LASTPINTEST 19
 
 #define TFT_DC    6          // TFT_RS
 #define TFT_CS    4
@@ -107,77 +100,51 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_D14  31
 #define TFT_D15  30
 
-uint16_t loopCount = 0;
+/* More data bus class: https://github.com/moononournation/Arduino_GFX/wiki/Data-Bus-Class */
+Arduino_DataBus *bus = new Arduino_SWPAR16(TFT_DC, TFT_CS, TFT_WR, TFT_RD, 49, 48, 47, 46, 45, 44, 43, 42, 37, 36, 35, 34, 33, 32, 31, 30);
 
-int8_t pinIdx = FIRSTPINTEST;
-int8_t pinModeSet = HIGH;
+/* More display class: https://github.com/moononournation/Arduino_GFX/wiki/Display-Class */
+Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, false /* IPS */);
 
-int8_t dbgPin[PINCOUNT] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
+/*******************************************************************************
+ * End of Arduino_GFX setting
+ ******************************************************************************/
+#define BACKGROUND BLACK
+#define MARK_COLOR WHITE
+#define SUBMARK_COLOR DARKGREY // LIGHTGREY
+
+int8_t colorIdx = 0;
+int16_t colorSet[] = {BACKGROUND, RED, GREEN, BLUE};
+int8_t colorSetSize = sizeof(colorSet) / 16;
+
+int8_t dbgPin[] = {TFT_DC, TFT_CS, TFT_WR, TFT_RESET,
                    TFT_D0, TFT_D1, TFT_D2, TFT_D3, TFT_D4, TFT_D5, TFT_D6, TFT_D7,
                    TFT_D8, TFT_D9, TFT_D10, TFT_D11, TFT_D12, TFT_D13, TFT_D14, TFT_D15};
-String dbgPinName[PINCOUNT] = {"DC", "CS", "WR", "RST",
+String dbgPinName[] = {"DC", "CS", "WR", "RST",
                      "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
                      "D8", "D9", "D10", "D11", "D12", "D13", "D14", "D15"};
 
-int8_t dbgPinValue[PINCOUNT];
-
-void setupPin();
-void debugPinData();
-
-void togglePin();
-void setPinIdx();
+void shiftBGcolor(int colorIdx);
 
 void setup(void)
-{ 
-  setupPin();
-  memset(dbgPinValue, -1, PINCOUNT);
-
-  debug_init();
+{
+  gfx->fillScreen(BACKGROUND);
+  delay(5000);
 }
 
 void loop()
 {
-  loopCount++;
-
-  togglePin();
+  shiftBGcolor(colorIdx);
   debugPinData();
-  setPinIdx();
+  delay(1000);
 }
 
-void setupPin()
-{
-  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
-  {
-    pinMode(dbgPin[i], OUTPUT);
-    digitalWrite(dbgPin[i], LOW);
+void shiftBGcolor(int colorIdx){
+  colorIdx++;
+
+  if(colorIdx > colorSetSize){
+    colorIdx = 1;
   }
-}
 
-void debugPinData()
-{
-  dbgPinValue[pinIdx] = digitalRead(dbgPin[pinIdx]);
-}
-
-void togglePin()
-{
-  digitalWrite(dbgPin[pinIdx], pinModeSet);
-}
-
-void setPinIdx()
-{
-  pinIdx++;
-  
-  if(pinIdx > LASTPINTEST)
-  {
-    pinIdx = FIRSTPINTEST;
-
-    if(pinModeSet)
-    {
-      pinModeSet = LOW;
-    }
-    else
-    {
-      pinModeSet = HIGH;
-    }
-  }
+  gfx->fillScreen(colorSet[colorIdx]);
 }
