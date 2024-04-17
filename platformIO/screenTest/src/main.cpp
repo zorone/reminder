@@ -176,11 +176,11 @@ void resetPinTest()
 
 void perPinTest()
 {
-  while(setupDelay < 32)
+  while(setupDelay < 62500)
   {
     setupDelay++;
   }
-  
+
   for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
   {
     pinModeSet = HIGH;
