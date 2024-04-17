@@ -109,10 +109,6 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 
 uint16_t loopCount = 0;
 
-uint8_t setupDelay = 0;
-
-int8_t isNotDonePerPinTest = -1;
-
 int8_t pinIdx = FIRSTPINTEST;
 int8_t pinModeSet = HIGH;
 
@@ -128,9 +124,6 @@ int8_t dbgPinValue[PINCOUNT];
 void setupPin();
 void debugPinData();
 
-void perPinTest();
-void resetPinTest();
-
 void togglePin();
 void setPinIdx();
 
@@ -140,9 +133,6 @@ void setup(void)
   memset(dbgPinValue, -1, PINCOUNT);
 
   debug_init();
-
-  perPinTest();
-  resetPinTest();
 }
 
 void loop()
@@ -166,37 +156,6 @@ void setupPin()
 void debugPinData()
 {
   dbgPinValue[pinIdx] = digitalRead(dbgPin[pinIdx]);
-}
-
-void resetPinTest()
-{
-  pinIdx = FIRSTPINTEST;
-  pinModeSet = HIGH;
-}
-
-void perPinTest()
-{
-  while(setupDelay < 256)
-  {
-    setupDelay++;
-
-    if(setupDelay > 255){
-      break;
-    }
-  }
-
-  for(int8_t i = FIRSTPINTEST; i <= LASTPINTEST; i++)
-  {
-    pinModeSet = HIGH;
-    togglePin();
-
-    pinModeSet = LOW;
-    togglePin();
-
-    pinIdx++;
-  }
-
-  isNotDonePerPinTest++; // Needs to run this function 2 times. First time for debugger to run finished loop() once before actual debug.
 }
 
 void togglePin()
