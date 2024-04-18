@@ -79,7 +79,7 @@ or   https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
 #define TFT_CS    4
 #define TFT_WR    3
 #define TFT_RD    -1         // connected to 3V3
-#define TFT_PORTLOW  11       // PORTL
+#define TFT_PORTLOW  12       // PORTL
 #define TFT_PORTHIGH  3       // PORTC
 #define TFT_RESET 2
 
@@ -109,7 +109,7 @@ Arduino_GFX *gfx = new Arduino_ILI9486_18bit(bus, TFT_RESET, 3 /* rotation */, f
 /*******************************************************************************
  * End of Arduino_GFX setting
  ******************************************************************************/
-#define BACKGROUND BLACK
+#define BACKGROUND YELLOW
 #define MARK_COLOR WHITE
 #define SUBMARK_COLOR DARKGREY // LIGHTGREY
 
