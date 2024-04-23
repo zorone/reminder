@@ -60,6 +60,8 @@ static const unsigned char PROGMEM logo_bmp[] =
 void setup() {
   Serial.begin(9600);
 
+  Serial.println("Initialize...");
+
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
@@ -85,31 +87,45 @@ void setup() {
   // unless that's what you want...rather, you can batch up a bunch of
   // drawing operations and then update the screen all at once by calling
   // display.display(). These examples demonstrate both approaches...
+  Serial.println("Start Testing");
 
+  Serial.println("testdrawline()");
   testdrawline();      // Draw many lines
 
+  Serial.println("testdrawrect()");
   testdrawrect();      // Draw rectangles (outlines)
 
+  Serial.println("testfillrect()");
   testfillrect();      // Draw rectangles (filled)
 
+  Serial.println("testdrawcircle()");
   testdrawcircle();    // Draw circles (outlines)
 
+  Serial.println("testfillcircle()");
   testfillcircle();    // Draw circles (filled)
 
+  Serial.println("testdrawroundrect()");
   testdrawroundrect(); // Draw rounded rectangles (outlines)
 
+  Serial.println("testfillroundrect()");
   testfillroundrect(); // Draw rounded rectangles (filled)
 
+  Serial.println("testdrawtriangle()");
   testdrawtriangle();  // Draw triangles (outlines)
 
+  Serial.println("testfilltriangle()");
   testfilltriangle();  // Draw triangles (filled)
 
+  Serial.println("testdrawchar()");
   testdrawchar();      // Draw characters of the default font
 
+  Serial.println("testdrawstyles()");
   testdrawstyles();    // Draw 'stylized' characters
 
+  Serial.println("testscrolltext()");
   testscrolltext();    // Draw scrolling text
 
+  Serial.println("testdrawbitmap()");
   testdrawbitmap();    // Draw a small bitmap image
 
   // Invert and restore display, pausing in-between
@@ -118,10 +134,12 @@ void setup() {
   display.invertDisplay(false);
   delay(1000);
 
+  Serial.println("testanimate()");
   testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
 }
 
 void loop() {
+  Serial.println("Test Finished.");
 }
 
 void testdrawline() {
