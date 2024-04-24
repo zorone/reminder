@@ -413,7 +413,6 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
     }
 
     display.display(); // Show the display buffer on the screen
-    delay(50);        // Pause for 1/10 second
 
     // Then update coordinates of each flake...
     for(f=0; f< NUMFLAKES; f++) {
