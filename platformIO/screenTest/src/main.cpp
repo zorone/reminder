@@ -77,4 +77,7 @@ void showTextOnScreen(){
 
   display.availableForWrite();
   display.println("Hello, World!");
+
+  display.display();
+  delay(1);
 }
