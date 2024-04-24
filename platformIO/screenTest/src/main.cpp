@@ -56,7 +56,7 @@ void setup() {
 
   // Show the display buffer on the screen. You MUST call display() after
   // drawing commands to make them visible on screen!
-  display.display();
+  showTextOnScreen();
   delay(2000);
   // display.display() is NOT necessary after every single drawing command,
   // unless that's what you want...rather, you can batch up a bunch of
