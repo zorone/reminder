@@ -35,7 +35,18 @@
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+#define PIN_A           9
+#define PIN_B          10
+#define PIN_KEY        11
+
 void showTextOnScreen();
+
+void IRAM_ATTR Ainterupt();
+void IRAM_ATTR Binterupt();
+
+
+int16_t idx = 0;
+int8_t rotatingState = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -56,17 +67,26 @@ void setup() {
 
   // Show the display buffer on the screen. You MUST call display() after
   // drawing commands to make them visible on screen!
-  showTextOnScreen();
-  delay(2000);
+
   // display.display() is NOT necessary after every single drawing command,
   // unless that's what you want...rather, you can batch up a bunch of
   // drawing operations and then update the screen all at once by calling
   // display.display(). These examples demonstrate both approaches...
 
+  pinMode(PIN_A, INPUT_PULLUP);
+  attachInterrupt(PIN_A, Ainterupt, RISING);
 
+  pinMode(PIN_B, INPUT_PULLUP);
+  attachInterrupt(PIN_B, Binterupt, RISING);
+
+  pinMode(PIN_KEY, INPUT_PULLUP);
+
+  showTextOnScreen();
 }
 
 void loop() {
+  rotatingState = 0;
+  display.println(idx);
 }
 
 void showTextOnScreen(){
@@ -75,9 +95,22 @@ void showTextOnScreen(){
   display.setCursor(0, 0);
   display.cp437(true);
 
-  display.availableForWrite();
   display.println("Hello, World!");
 
   display.display();
   delay(1);
+}
+
+void IRAM_ATTR Ainterupt(){
+  if(rotatingState < 0) return;
+
+  rotatingState = 1;
+  idx++;
+
+}
+void IRAM_ATTR Binterupt(){
+  if(rotatingState > 0) return;
+
+  rotatingState = 1;
+  idx++;
 }
