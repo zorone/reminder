@@ -35,9 +35,9 @@
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-#define PIN_A           9
-#define PIN_B          10
-#define PIN_KEY        11
+#define PIN_A          14
+#define PIN_B          12
+#define PIN_KEY        13
 
 void showTextOnScreen();
 
