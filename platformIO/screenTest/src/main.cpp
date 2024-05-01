@@ -48,6 +48,9 @@ void IRAM_ATTR Binterupt();
 int16_t idx = 0;
 int8_t rotatingState = 0;
 
+uint8_t xCursor = 0;
+uint8_t yCursor = 0;
+
 void setup() {
   Serial.begin(115200);
 
@@ -91,7 +94,10 @@ void loop() {
     // do nothing... This loop is for delaying idx value update.
   }
 
-  display.println(display.getCursorX() + ", " + display.getCursorY());
+  xCursor = display.getCursorX();
+  yCursor = display.getCursorY();
+  Serial.println(xCursor + ", " + yCursor);
+  display.println(xCursor + ", " + yCursor);
   display.display();
 }
 
