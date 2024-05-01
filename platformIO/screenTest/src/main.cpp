@@ -91,6 +91,8 @@ void loop() {
     // do nothing... This loop is for delaying idx value update.
   }
 
+  display.clearDisplay();
+  display.setCursor(0, 0);
   display.println(idx);
   display.display();
 }
