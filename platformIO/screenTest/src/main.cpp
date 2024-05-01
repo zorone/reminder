@@ -109,14 +109,14 @@ void showTextOnScreen(){
 }
 
 void IRAM_ATTR Ainterupt(){
-  if(rotatingState < 0) return;
+  if(rotatingState != 0) return;
 
   rotatingState = 1;
   idx++;
 
 }
 void IRAM_ATTR Binterupt(){
-  if(rotatingState > 0) return;
+  if(rotatingState != 0) return;
 
   rotatingState = -1;
   idx--;
