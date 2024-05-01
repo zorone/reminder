@@ -44,12 +44,8 @@ void showTextOnScreen();
 void IRAM_ATTR Ainterupt();
 void IRAM_ATTR Binterupt();
 
-
 int16_t idx = 0;
 int8_t rotatingState = 0;
-
-uint8_t xCursor = 0;
-uint8_t yCursor = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -93,11 +89,7 @@ void loop() {
   for(uint8_t i = 0; i < 255; i++){
     // do nothing... This loop is for delaying idx value update.
   }
-
-  xCursor = display.getCursorX();
-  yCursor = display.getCursorY();
-  Serial.println(xCursor + ", " + yCursor);
-  display.println(xCursor + ", " + yCursor);
+  display.println(idx);
   display.display();
 }
 
@@ -106,6 +98,7 @@ void showTextOnScreen(){
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
   display.cp437(true);
+  display.setTextWrap(true);
 
   display.println("Hello, World!");
 
