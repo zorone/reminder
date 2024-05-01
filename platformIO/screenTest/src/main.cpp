@@ -73,10 +73,10 @@ void setup() {
   // display.display(). These examples demonstrate both approaches...
 
   pinMode(PIN_A, INPUT_PULLUP);
-  attachInterrupt(PIN_A, Ainterupt, RISING);
+  attachInterrupt(PIN_A, Ainterupt, CHANGE);
 
   pinMode(PIN_B, INPUT_PULLUP);
-  attachInterrupt(PIN_B, Binterupt, RISING);
+  attachInterrupt(PIN_B, Binterupt, CHANGE);
 
   pinMode(PIN_KEY, INPUT_PULLUP);
 
@@ -118,6 +118,6 @@ void IRAM_ATTR Ainterupt(){
 void IRAM_ATTR Binterupt(){
   if(rotatingState > 0) return;
 
-  rotatingState = 1;
+  rotatingState = -1;
   idx--;
 }
