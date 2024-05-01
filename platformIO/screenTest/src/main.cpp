@@ -84,8 +84,6 @@ void setup() {
 }
 
 void loop() {
-  rotatingState = 0;
-
   for(uint8_t i = 0; i < 255; i++){
     // do nothing... This loop is for delaying idx value update.
   }
@@ -109,14 +107,22 @@ void showTextOnScreen(){
 }
 
 void IRAM_ATTR Ainterupt(){
-  if(rotatingState != 0) return;
+  if(rotatingState > 0) return;
+  if(rotatingState < 0){
+    rotatingState = 0;
+    return;
+  }
 
   rotatingState = 1;
   idx++;
 
 }
 void IRAM_ATTR Binterupt(){
-  if(rotatingState != 0) return;
+  if(rotatingState < 0) return;
+  if(rotatingState > 0){
+    rotatingState = 0;
+    return;
+  }
 
   rotatingState = -1;
   idx--;
