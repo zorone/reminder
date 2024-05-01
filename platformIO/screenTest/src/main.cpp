@@ -91,10 +91,7 @@ void loop() {
     // do nothing... This loop is for delaying idx value update.
   }
 
-  if(display.getCursorX() > 64){
-    display.setCursor(8, 0);
-  }
-  display.println(idx);
+  display.println(display.getCursorX() + ", " + display.getCursorY());
   display.display();
 }
 
