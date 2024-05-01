@@ -89,6 +89,8 @@ void loop() {
   for(uint8_t i = 0; i < 255; i++){
     // do nothing... This loop is for delaying idx value update.
   }
+  display.clearDisplay();
+  display.setCursor(0, 8);
   display.println(idx);
   display.display();
 }
