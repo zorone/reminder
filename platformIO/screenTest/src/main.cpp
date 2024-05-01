@@ -73,10 +73,10 @@ void setup() {
   // display.display(). These examples demonstrate both approaches...
 
   pinMode(PIN_A, INPUT_PULLUP);
-  attachInterrupt(PIN_A, Ainterupt, CHANGE);
+  attachInterrupt(PIN_A, Ainterupt, RISING);
 
   pinMode(PIN_B, INPUT_PULLUP);
-  attachInterrupt(PIN_B, Binterupt, CHANGE);
+  attachInterrupt(PIN_B, Binterupt, RISING);
 
   pinMode(PIN_KEY, INPUT_PULLUP);
 
@@ -84,6 +84,8 @@ void setup() {
 }
 
 void loop() {
+  rotatingState = 0;
+
   for(uint8_t i = 0; i < 255; i++){
     // do nothing... This loop is for delaying idx value update.
   }
@@ -107,22 +109,14 @@ void showTextOnScreen(){
 }
 
 void IRAM_ATTR Ainterupt(){
-  if(rotatingState > 0) return;
-  if(rotatingState < 0){
-    rotatingState = 0;
-    return;
-  }
+  if(rotatingState != 0) return;
 
   rotatingState = 1;
   idx++;
 
 }
 void IRAM_ATTR Binterupt(){
-  if(rotatingState < 0) return;
-  if(rotatingState > 0){
-    rotatingState = 0;
-    return;
-  }
+  if(rotatingState != 0) return;
 
   rotatingState = -1;
   idx--;
