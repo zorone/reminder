@@ -119,5 +119,5 @@ void IRAM_ATTR Binterupt(){
   if(rotatingState > 0) return;
 
   rotatingState = 1;
-  idx++;
+  idx--;
 }
